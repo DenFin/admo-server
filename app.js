@@ -34,7 +34,10 @@ app.use(express.json())
 /**
  * ROUTES
  */
+const authRouter = require("./src/routes/auth.routes")
 const contactRouter = require("./src/routes/contact.routes")
+
+app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/contacts", contactRouter)
 
 app.listen(process.env.PORT, console.log(`Server started on port ${process.env.PORT}`));
