@@ -25,17 +25,16 @@ app.use((err, req, res, next) => {
 });
 
 
+/**
+ * MIDDLEWARE
+ */
+app.use(express.json())
+
 
 /**
  * ROUTES
  */
 const contactRouter = require("./src/routes/contact.routes")
-
-
-app.get('/', (req, res) => {
-    res.send('TEST')
-})
-
 app.use("/api/v1/contacts", contactRouter)
 
 app.listen(process.env.PORT, console.log(`Server started on port ${process.env.PORT}`));
