@@ -79,6 +79,7 @@ exports.loginUser = async function(req, res, next) {
 }
 
 exports.getUser = (req, res, next) => { // this function will send user data to the front-end as I said above authFetch on the user object in nuxt.config.js will send a request and it will execute
+
     res.status(200).json({
         user: {
             id: loadedUser._id,
