@@ -27,3 +27,8 @@ exports.deleteContactById = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
+
+exports.getContactsCount = async function(req, res) {
+    const contactsCount = await Contact.countDocuments()
+    res.status(200).json(contactsCount)
+}
