@@ -5,5 +5,6 @@ const ContactController = require('../controllers/contact.controller')
 
 router.get('/', ContactController.getContacts)
 router.post('/', ContactController.createContact)
+router.delete('/:id', ContactController.deleteContactById)
 
 module.exports = router

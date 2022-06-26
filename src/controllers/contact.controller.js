@@ -13,8 +13,17 @@ exports.createContact = async function(req, res) {
     })
     try {
         const result = await contact.save()
-        res.send(result)
+        res.status(201).json(result)
     } catch (error) {
         console.log(error.message)
+    }
+}
+
+exports.deleteContactById = async (req, res) => {
+    try {
+        const result = await Contact.deleteOne({ _id: req.params.id })
+        res.status(204).json(result)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
     }
 }
