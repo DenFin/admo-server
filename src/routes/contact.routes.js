@@ -7,4 +7,6 @@ router.get('/', ContactController.getContacts)
 router.post('/', ContactController.createContact)
 router.delete('/:id', ContactController.deleteContactById)
 
+router.get('/count', ContactController.getContactsCount)
+
 module.exports = router
