@@ -5,11 +5,26 @@ exports.getContacts = async function(req, res) {
     res.status(200).json(contacts)
 }
 
+exports.getContactById = async (req, res) => {
+    let contact;
+    console.log(req.params)
+    try {
+        contact = await Contact.findById(req.params.id)
+    } catch(error){
+        console.log(error)
+    }
+    res.status(200).json(contact)
+}
+
+
 exports.createContact = async function(req, res) {
     const contact = new Contact({
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         dob: req.body.dob,
+        street: req.body.street,
+        city: req.body.city,
+        zip: req.body.zip
     })
     try {
         const result = await contact.save()
