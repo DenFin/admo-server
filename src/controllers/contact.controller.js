@@ -16,6 +16,16 @@ exports.getContactById = async (req, res) => {
     res.status(200).json(contact)
 }
 
+exports.getContactNameById = async (req, res) => {
+    let contact;
+    console.log(req.params)
+    try {
+        contact = await Contact.findById(req.params.id)
+    } catch(error){
+        console.log(error)
+    }
+    res.status(200).json({ firstname: contact.firstname, lastname: contact.lastname })
+}
 
 exports.createContact = async function(req, res) {
     const contact = new Contact({
@@ -45,5 +55,6 @@ exports.deleteContactById = async (req, res) => {
 
 exports.getContactsCount = async function(req, res) {
     const contactsCount = await Contact.countDocuments()
+    console.log('contactsCount', contactsCount)
     res.status(200).json(contactsCount)
 }
