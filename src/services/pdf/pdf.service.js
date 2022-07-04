@@ -7,9 +7,9 @@ const templateHtml = fs.readFileSync(`${__dirname}/invoice_pdf_template.html`, '
 const name = __dirname
 
 const STORAGE_URL = process.env.SUPABASE_URL
-const SERVICE_KEY = process.env.SUPABASE_API_KEY //! service key, not anon key
+const SERVICE_KEY = process.env.SUPABASE_API_KEY
 
-exports.createPdfAndUpload = async () => {
+exports.createPdfAndUpload = async (invoice) => {
     // launch a new chrome instance
     const browser = await puppeteer.launch({
         headless: true
@@ -51,12 +51,9 @@ exports.createPdfAndUpload = async () => {
         },
         printBackground: true,
     }
-
     createFolderStructure(year, month)
     await createPdfFile(page, html, year, month, data, browser)
-    const res = await uploadPdfFile(path, year, month, fileName)
-    return res
-    console.log('uploadPdfFile', res)
+    return await uploadPdfFile(path, year, month, fileName)
 }
 
 async function createPdfFile(page, html, year, month, data, browser) {
@@ -125,4 +122,6 @@ function createMonthDirectory(_month) {
 }
 
 
-
+/**
+ * TEST
+ */
