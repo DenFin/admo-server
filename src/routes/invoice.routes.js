@@ -5,6 +5,7 @@ const InvoiceController = require('../controllers/invoice.controller')
 
 router.get('/', InvoiceController.getInvoices)
 router.get('/:id', InvoiceController.getInvoiceById)
+router.get('/:id/pdf', InvoiceController.getInvoicePdfById)
 router.post('/', InvoiceController.createInvoice)
 router.post('/pdf', InvoiceController.createInvoicePdfAndUpload)
 router.post('/:id/pdf', InvoiceController.createInvoicePdf)
