@@ -9,7 +9,7 @@ const name = __dirname
 const STORAGE_URL = process.env.SUPABASE_URL
 const SERVICE_KEY = process.env.SUPABASE_API_KEY //! service key, not anon key
 
-exports.createPdfAndUpload = async () => {
+exports.createPdfAndUpload = async (invoice) => {
     // launch a new chrome instance
     const browser = await puppeteer.launch({
         headless: true
@@ -17,21 +17,9 @@ exports.createPdfAndUpload = async () => {
     // create a new page
     const page = await browser.newPage()
 
-    const data = {
-        "_id": "62c185dd790a3fd989104405",
-        "nr": "2022-001",
-        "client": "Client name",
-        "title": "Invoice title",
-        "date": new Date(),
-        "dateRangeStart": null,
-        "dateRangeEnd": null,
-        "status": "pending",
-        "items": "1. Logo Desgin / 2. Webdesign",
-        "billingTotal": "600",
-        "billingTaxes": "20",
-        "billingTotalWithTaxes": "620",
-        "__v": 0
-    }
+    console.log('invoice', invoice)
+
+    const data = invoice
     const year = data.date.getFullYear()
     const month = data.date.getMonth() + 1
     const path = `temp/${year}/${month}/${data.nr}.pdf`
@@ -99,6 +87,17 @@ async function uploadPdfFile(path, year, month, fileName){
         .from('invoices')
         .upload(bucketPath, file);
     return res
+}
+
+exports.getPdfDownloadLinkByKey = (key) => {
+    const supabase = createClient(STORAGE_URL, SERVICE_KEY)
+
+    const res = supabase
+        .storage
+        .from('invoices')
+        .getPublicUrl(key)
+    return res
+    console.log('downloadres', res)
 }
 
 function createFolderStructure(_year, _month) {

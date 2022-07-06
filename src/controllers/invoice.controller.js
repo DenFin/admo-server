@@ -46,8 +46,12 @@ exports.createInvoice = async (req, res) => {
         billingTotalWithTaxes: req.body.billingTotalWithTaxes
     })
     try {
-        const result = await invoice.save()
-        res.status(201).json(result)
+        const resultInvoice = await invoice.save()
+        const resPdfCreation = await PdfService.createPdfAndUpload(invoice)
+        const resPdfDownloadLink = await PdfService.getPdfDownloadLinkByKey(resPdfCreation.data.Key)
+        console.log('resPdfCreation', resPdfCreation)
+        console.log('PDF LINK', resPdfDownloadLink)
+        res.status(201).json({ invoice: resultInvoice, pdf: resPdfCreation, pdfLink: resPdfDownloadLink})
     } catch (error) {
         console.log(error.message)
     }
@@ -76,4 +80,13 @@ exports.createInvoicePdfAndUpload = async (req, res) => {
         console.log('File already exists')
     }
     res.json("WORKS")
+}
+
+exports.deleteInvoiceById = async (req, res) => {
+    try {
+        const result = await Invoice.deleteOne({ _id: req.params.id })
+        res.status(204).json(result)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
 }
