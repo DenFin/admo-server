@@ -6,6 +6,10 @@ const { createClient } = require('@supabase/supabase-js')
 const STORAGE_URL = process.env.SUPABASE_URL
 const SERVICE_KEY = process.env.SUPABASE_API_KEY
 
+const FORTNIGHT = 12096e5
+
+
+
 exports.getInvoices = async (req, res) => {
     const invoices = await Invoice.find()
     res.status(200).json(invoices)
@@ -21,6 +25,7 @@ exports.getInvoiceById = async (req, res) => {
     }
     res.status(200).json(invoice)
 }
+
 exports.getInvoicePdfById = async (req, res) => {
     const supabase = createClient(STORAGE_URL, SERVICE_KEY)
     const result = await supabase
@@ -29,7 +34,6 @@ exports.getInvoicePdfById = async (req, res) => {
         .list()
     res.status(200).json(result)
 }
-
 
 exports.createInvoice = async (req, res) => {
     const invoice = new Invoice({
@@ -46,8 +50,12 @@ exports.createInvoice = async (req, res) => {
         billingTotalWithTaxes: req.body.billingTotalWithTaxes
     })
     try {
-        const result = await invoice.save()
-        res.status(201).json(result)
+        const resultInvoice = await invoice.save()
+        const resPdfCreation = await PdfService.createPdfAndUpload(invoice)
+        const resPdfDownloadLink = await PdfService.getPdfDownloadLinkByKey(resPdfCreation.data.Key)
+        console.log('resPdfCreation', resPdfCreation)
+        console.log('PDF LINK', resPdfDownloadLink)
+        res.status(201).json({ invoice: resultInvoice, pdf: resPdfCreation, pdfLink: resPdfDownloadLink})
     } catch (error) {
         console.log(error.message)
     }
@@ -76,4 +84,38 @@ exports.createInvoicePdfAndUpload = async (req, res) => {
         console.log('File already exists')
     }
     res.json("WORKS")
+}
+
+exports.deleteInvoiceById = async (req, res) => {
+    try {
+        const result = await Invoice.deleteOne({ _id: req.params.id })
+        res.status(204).json(result)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+exports.updateInvoiceStatus = async (req, res) => {
+    const now = Date.now()
+    const invoices = await Invoice.find()
+    invoices.forEach(invoice => {
+        const invoiceDateInMilli = new Date(invoice.date).getTime()
+        const dueDate = new Date(invoiceDateInMilli + FORTNIGHT)
+        if(now > dueDate) {
+            const invoiceUpdated = invoice
+            const query = { _id: invoice._id };
+            invoice.status = 'due'
+            // Update invoice
+            const options = { "upsert": true };
+            Invoice.updateOne(query, invoiceUpdated, options).then(result => {
+                const { matchedCount, modifiedCount } = result;
+                if (matchedCount && modifiedCount) {
+                    console.log(`Successfully edited invoice.`)
+                }
+            })
+                .catch(err => console.error(`Failed to add review: ${err}`))
+        }
+    })
+
+    res.json("TEST")
 }
