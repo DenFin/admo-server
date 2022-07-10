@@ -35,3 +35,4 @@ exports.updateGeneralInformationById = async (req, res) => {
         console.log(error)
     }
 }
+

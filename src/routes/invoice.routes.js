@@ -11,5 +11,5 @@ router.post('/', InvoiceController.createInvoice)
 router.post('/pdf', InvoiceController.createInvoicePdfAndUpload)
 router.post('/:id/pdf', InvoiceController.createInvoicePdf)
 router.delete('/:id', InvoiceController.deleteInvoiceById)
-
+router.get('/status/update', InvoiceController.updateInvoiceStatus)
 module.exports = router
