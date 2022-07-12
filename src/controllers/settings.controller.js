@@ -6,9 +6,18 @@ exports.getGeneralInformation = async (req, res) => {
 }
 
 exports.createGeneralInformation = async (req, res) => {
-    const generalInformation = new Settings({
-        generalInformation: req.body.businessName,
-    })
+    const newSettingsObj = {
+        generalInformation: {
+            logoUrl: req.body.logoUrl,
+            companyName: req.body.companyName,
+            companyStreet: req.body.companyStreet,
+            companyCity: req.body.companyCity,
+            companyZip: req.body.companyZip,
+            taxNumber: req.body.taxNumber,
+            taxId: req.body.taxId,
+        }
+    }
+    const generalInformation = new Settings(newSettingsObj)
     try {
         const result = await generalInformation.save()
         res.status(201).json(result)
