@@ -63,10 +63,6 @@ async function createPdfFile(page, html, year, month, data, browser) {
         // event will be received when browser updates fonts on the page due to webfont loading.
     });
 
-    const pdfBuffer = await page.pdf({
-        format: 'A4'
-    })
-
     await page.pdf({
         format: 'A4',
         path: path,
