@@ -1,8 +1,16 @@
 const Contact = require('../models/contact.model')
+const paginate = require('jw-paginate')
 
 exports.getContacts = async function(req, res) {
+    console.log(req.query)
     const contacts = await Contact.find()
-    res.status(200).json(contacts)
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 5;
+    const pager = paginate(contacts.length, page, pageSize);
+
+    const items = contacts.slice(pager.startIndex, pager.endIndex + 1);
+
+    res.status(200).json({ pager,items })
 }
 
 exports.getContactById = async (req, res) => {

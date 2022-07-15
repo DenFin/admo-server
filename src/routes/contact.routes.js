@@ -10,6 +10,4 @@ router.get('/:id/name', ContactController.getContactNameById)
 router.post('/', ContactController.createContact)
 router.delete('/:id', ContactController.deleteContactById)
 
-
-
 module.exports = router
