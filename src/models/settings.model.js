@@ -28,12 +28,16 @@ const GeneralInformationSchema = new mongoose.Schema({
     taxId: {
         type: String,
         required: false
-    }
+    },
 })
 
 const settingsSchema = new mongoose.Schema({
     generalInformation: {
         type: GeneralInformationSchema
+    },
+    userId: {
+        type: String,
+        required: true
     }
 })
 
