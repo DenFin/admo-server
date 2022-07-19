@@ -1,13 +1,11 @@
 const Invoice = require('../models/invoice.model')
 const PdfService = require('../services/pdf/pdf.service')
-
+const InvoiceService = require('../services/invoice/invoice.service')
 const { createClient } = require('@supabase/supabase-js')
 
 const STORAGE_URL = process.env.SUPABASE_URL
 const SERVICE_KEY = process.env.SUPABASE_API_KEY
-
 const FORTNIGHT = 12096e5
-
 
 
 exports.getInvoices = async (req, res) => {
@@ -116,6 +114,6 @@ exports.updateInvoiceStatus = async (req, res) => {
                 .catch(err => console.error(`Failed to add review: ${err}`))
         }
     })
+    res.json('SUCCESS')
 
-    res.json("TEST")
 }

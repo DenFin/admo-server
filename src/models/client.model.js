@@ -14,6 +14,9 @@ const clientSchema = new mongoose.Schema({
     city: {
         type: String,
     },
+    taxId: {
+        type: String,
+    },
 })
 
 module.exports = mongoose.model('Client', clientSchema);

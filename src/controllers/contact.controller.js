@@ -1,8 +1,17 @@
 const Contact = require('../models/contact.model')
+const paginate = require('jw-paginate')
+const { validationResult } = require('express-validator');
 
 exports.getContacts = async function(req, res) {
+    console.log(req.query)
     const contacts = await Contact.find()
-    res.status(200).json(contacts)
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 5;
+    const pager = paginate(contacts.length, page, pageSize);
+
+    const items = contacts.slice(pager.startIndex, pager.endIndex + 1);
+
+    res.status(200).json({ pager,items })
 }
 
 exports.getContactById = async (req, res) => {
@@ -27,20 +36,28 @@ exports.getContactNameById = async (req, res) => {
     res.status(200).json({ firstname: contact.firstname, lastname: contact.lastname })
 }
 
-exports.createContact = async function(req, res) {
-    const contact = new Contact({
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        dob: req.body.dob,
-        street: req.body.street,
-        city: req.body.city,
-        zip: req.body.zip
-    })
+exports.createContact = async function(req, res, next) {
+
     try {
+        const errors = validationResult(req); // Finds the validation errors in this request and wraps them in an object with handy functions
+
+        if (!errors.isEmpty()) {
+            res.status(422).json({ errors: errors.array() });
+            return;
+        }
+        const contact = new Contact({
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            dob: req.body.dob,
+            street: req.body.street,
+            city: req.body.city,
+            zip: req.body.zip
+        })
         const result = await contact.save()
         res.status(201).json(result)
     } catch (error) {
         console.log(error.message)
+        return next(error)
     }
 }
 
